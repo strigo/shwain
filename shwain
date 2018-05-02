@@ -14,6 +14,19 @@
 # Color mapping for severity levels.
 # http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 ###
+
+
+declare readonly usage="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
+
+Options:
+  --pretty / --ugly  Output JSON instead of key=value pairs for console logger
+  -j, --json         Use the JSON logger formatter instead of the console one
+  -n, --name TEXT    Change the default logger's name
+  --no-color         Disable coloring in console formatter
+  --simple           Log only message to the console
+  -h, --help         Show this message and exit.
+"
+
 declare -A COLOR_MAPPING=(
   ["DEBUG"]="0;36"    # CYAN
   ["INFO"]="0;32"     # GREEN
@@ -151,8 +164,8 @@ function _main() {
     exit 1
   fi
 
-  OPTIONS=un:j
-  LONGOPTIONS=simple,name:,json,no-color,ugly
+  OPTIONS=hun:j
+  LONGOPTIONS=simple,name:,json,no-color,ugly,help
 
   # Temporarily store output to be able to check for errors
   # e.g. use “--options” parameter by name to activate quoting/enhanced mode
@@ -190,12 +203,24 @@ function _main() {
         simple=y
         shift
         ;;
+      -h|--help)
+        echo "$usage"
+        exit 0
+        ;;
       --)
         shift
         break
         ;;
     esac
   done
+
+  if [ $# -le 1 ]
+    then
+      echo "$usage" >&2
+
+      echo "You must at least provide two arguments: e.g. shwain LEVEL MESSAGE"
+      exit 1
+  fi
 
   # Assign level and message from left-over arguments and then shift
   # so that `kvs` contains only the key value pairs.
