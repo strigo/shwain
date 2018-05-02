@@ -84,8 +84,10 @@ function _log() {
   local level="$1"
   local readonly message="$2"
   local -n kv="$3"
+
   local readonly ugly="${4:-$SHWAIN_UGLY}"
   local readonly json="${5:-$SHWAIN_JSON}"
+
   # If name not provided, default to env var. If env var not provided, default to "SHWAIN"
   local name="${6:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
   local readonly color="${7:-$SHWAIN_COLOR}"
@@ -130,12 +132,12 @@ function _log() {
     printf '}'
   else
     if [ -z "$simple" ]; then
-        if [ -z "$color" ]; then
-            level="\e[${COLOR_MAPPING[${level^^}]}m${level^^}\e[0m"
-        fi
-        log="$timestamp - $name - $level - ${expanded_message}"
+      if [ -z "$color" ]; then
+        level="\e[${COLOR_MAPPING[${level^^}]}m${level^^}\e[0m"
+      fi
+      log="$timestamp - $name - $level - ${expanded_message}"
     else
-        log="$expanded_message"
+      log="$expanded_message"
     fi
   fi
 
@@ -145,8 +147,8 @@ function _log() {
 function _main() {
   getopt --test > /dev/null
   if [[ $? -ne 4 ]]; then
-      echo "I’m sorry, `getopt --test` failed in this environment."
-      exit 1
+    echo "I’m sorry, `getopt --test` failed in this environment."
+    exit 1
   fi
 
   OPTIONS=un:j
