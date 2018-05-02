@@ -7,7 +7,19 @@ Note that many features are not implemented yet and that some implementations ar
 
 ## Usage
 
-```shell
+```text
+
+$ ./shwain -h
+Usage: shwain [OPTIONS] LEVEL MESSAGE [OBJECTS]...
+
+Options:
+  --pretty / --ugly  Output JSON instead of key=value pairs for console logger
+  -j, --json         Use the JSON logger formatter instead of the console one
+  -n, --name TEXT    Change the default logger's name
+  --no-color         Disable coloring in console formatter
+  --simple           Log only message to the console
+  -h, --help         Show this message and exit.
+
 $ ./shwain info w00t a=b b=c c=d
 2018-05-02 09:54:38 - SHWAIN - INFO - w00t
   a=b
@@ -22,7 +34,7 @@ $ ./shwain info w00t a=b b=c c=d
 From a script:
 
 ```bash
-[[ ! -f "$FILE" ]] && curl -L -O https://github.com/nir0s/shwain/raw/master/shwain
+[[ ! -f "shwain" ]] && curl -L -O https://github.com/nir0s/shwain/raw/master/shwain
 
 . shwain
 
