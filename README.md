@@ -22,6 +22,8 @@ $ ./shwain info w00t a=b b=c c=d
 From a script:
 
 ```bash
+[[ ! -f "$FILE" ]] && curl -L -O https://github.com/nir0s/shwain/raw/master/shwain
+
 . shwain
 
 log.info woot a=b b=c c=d
