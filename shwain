@@ -16,10 +16,9 @@
 ###
 
 
-declare readonly usage="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
+declare readonly USAGE="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
 
 Options:
-  --pretty / --ugly  Output JSON instead of key=value pairs for console logger
   -j, --json         Use the JSON logger formatter instead of the console one
   -n, --name TEXT    Change the default logger's name
   --no-color         Disable coloring in console formatter
@@ -222,7 +221,7 @@ function _main() {
         shift
         ;;
       -h|--help)
-        echo "$usage"
+        echo "$USAGE"
         exit 0
         ;;
       --)
@@ -234,9 +233,9 @@ function _main() {
 
   if [ $# -le 1 ]
     then
-      echo "$usage" >&2
+      echo "$USAGE" >&2
 
-      echo "You must at least provide two arguments: e.g. shwain LEVEL MESSAGE"
+      echo "You must at least provide two arguments: i.e shwain LEVEL MESSAGE"
       exit 1
   fi
 
