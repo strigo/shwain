@@ -97,14 +97,12 @@ function _log() {
   local level="$1"
   local readonly message="$2"
   local -n kv="$3"
-
-  local readonly ugly="${4:-$SHWAIN_UGLY}"
-  local readonly json="${5:-$SHWAIN_JSON}"
+  local readonly json="${4:-$SHWAIN_JSON}"
 
   # If name not provided, default to env var. If env var not provided, default to "SHWAIN"
-  local name="${6:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
-  local readonly color="${7:-$SHWAIN_COLOR}"
-  local readonly simple="${8:-$SHWAIN_SIMPLE}"
+  local name="${5:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
+  local readonly color="${6:-$SHWAIN_COLOR}"
+  local readonly simple="${7:-$SHWAIN_SIMPLE}"
 
   local log='';
 
@@ -164,8 +162,8 @@ function _main() {
     exit 1
   fi
 
-  OPTIONS=hun:j
-  LONGOPTIONS=simple,name:,json,no-color,ugly,help
+  OPTIONS=hn:j
+  LONGOPTIONS=simple,name:,json,no-color,help
 
   # Temporarily store output to be able to check for errors
   # e.g. use “--options” parameter by name to activate quoting/enhanced mode
@@ -183,10 +181,6 @@ function _main() {
 
   while true; do
     case "$1" in
-      -u|--ugly)
-        pretty=y
-        shift
-        ;;
       -j|--json)
         json=y
         shift
@@ -229,7 +223,7 @@ function _main() {
   shift; shift
   local readonly kvs=("$@")
 
-  _log "$level" "$message" kvs "$ugly" "$json" "$name" "$color" "$simple"
+  _log "$level" "$message" kvs "$json" "$name" "$color" "$simple"
 }
 
 # Only run main if not sourced.
