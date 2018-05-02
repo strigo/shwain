@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 ######
-# This is an implementation of a logger for bash.`
-# It aims to be a partial function clone of https://github.com/nir0s/wryte.
+# Shwain is a Mark Twain for bash (i.e. logger).
+# It aims to be a partial functional clone of https://github.com/nir0s/wryte.
 #
 # Usage:
 #   shwain info message key1=value1 key2=value2 --json
