@@ -24,6 +24,7 @@ Options:
   -n, --name TEXT    Change the default logger's name
   --no-color         Disable coloring in console formatter
   --simple           Log only message to the console
+  --enrich           Enrich with additional metadata like hostname, pid, etc..
   -h, --help         Show this message and exit.
 "
 

@@ -18,6 +18,7 @@ Options:
   -n, --name TEXT    Change the default logger's name
   --no-color         Disable coloring in console formatter
   --simple           Log only message to the console
+  --enrich           Enrich with additional metadata like hostname, pid, etc..
   -h, --help         Show this message and exit.
 
 $ ./shwain info w00t a=b b=c c=d
@@ -53,11 +54,16 @@ log.info woot a=b b=c c=d
 * error
 * critical
 
-## Some flags for now
 
-* `--simple` -> try it out. no enrichment.
-* `--json` -> print json instead.
-* `--no-color` -> um.. no.. color?
-* `--name` -> the logger name to use.
+## Env var based config
 
-Env vars are also available for when sourcing: e.g. `--simple` -> `export SHWAIN_SIMPLE` (`--no-color` is `SHWAIN_COLOR` wtf inconsistency).
+All flags are configurable via env vars:
+
+```shell
+export SHWAIN_flagname  # e.g. if `SHWAIN_JSON` is set, ...
+# (`--no-color` is `SHWAIN_COLOR` wtf inconsistency).
+```
+
+## Tests
+
+Currently tested by a group of dwarves inside my head.
