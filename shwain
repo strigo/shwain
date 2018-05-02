@@ -167,32 +167,32 @@ function _main() {
   eval set -- "$PARSED"
 
   while true; do
-      case "$1" in
-          -u|--ugly)
-						pretty=y
-						shift
-						;;
-          -j|--json)
-						json=y
-						shift
-						;;
-          -n|--name)
-						name="$2"
-						shift
-						;;
-          --no-color)
-						color=y
-						shift
-						;;
-          --simple)
-						simple=y
-						shift
-						;;
-          --)
-						shift
-						break
-						;;
-      esac
+    case "$1" in
+      -u|--ugly)
+        pretty=y
+        shift
+        ;;
+      -j|--json)
+        json=y
+        shift
+        ;;
+      -n|--name)
+        name="$2"
+        shift
+        ;;
+      --no-color)
+        color=y
+        shift
+        ;;
+      --simple)
+        simple=y
+        shift
+        ;;
+      --)
+        shift
+        break
+        ;;
+    esac
   done
 
   # Assign level and message from left-over arguments and then shift
