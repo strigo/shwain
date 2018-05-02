@@ -103,6 +103,7 @@ function _log() {
   local name="${5:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
   local readonly color="${6:-$SHWAIN_COLOR}"
   local readonly simple="${7:-$SHWAIN_SIMPLE}"
+  local readonly enrich="${8:-$SHWAIN_ENRICH}"
 
   local log='';
 
@@ -116,7 +117,9 @@ function _log() {
   if [ "$level" == "EVENT" ] || [ "$level" == "event" ]; then type="event"; fi
 
   # Enrich kvs
-  kv+=("pid=$pid" "hostname=$hostname" "type=$type")
+  if [ ! -z $enrich ]; then
+    kv+=("pid=$pid" "hostname=$hostname" "type=$type")
+  fi
 
   for ((i = 0; i < ${#kv[@]}; i++))
   do
@@ -162,8 +165,8 @@ function _main() {
     exit 1
   fi
 
-  OPTIONS=hn:j
-  LONGOPTIONS=simple,name:,json,no-color,help
+  OPTIONS=hn:je
+  LONGOPTIONS=simple,name:,json,no-color,help,no-enrich
 
   # Temporarily store output to be able to check for errors
   # e.g. use “--options” parameter by name to activate quoting/enhanced mode
@@ -197,6 +200,10 @@ function _main() {
         simple=y
         shift
         ;;
+      -e|--enrich)
+        enrich=n
+        shift
+        ;;
       -h|--help)
         echo "$usage"
         exit 0
@@ -223,7 +230,7 @@ function _main() {
   shift; shift
   local readonly kvs=("$@")
 
-  _log "$level" "$message" kvs "$json" "$name" "$color" "$simple"
+  _log "$level" "$message" kvs "$json" "$name" "$color" "$simple" "$enrich"
 }
 
 # Only run main if not sourced.
