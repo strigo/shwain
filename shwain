@@ -1,0 +1,211 @@
+#!/usr/bin/env bash
+
+######
+# This is an implementation of a logger for bash.`
+# It aims to be a partial function clone of https://github.com/nir0s/wryte.
+#
+# Usage:
+#   shwain info message key1=value1 key2=value2 --json
+#   shwain event "Killing process" pid="$$"
+#   shwain error WOOT! errorlevel=$errorlevel --simple
+######
+
+###
+# Color mapping for severity levels.
+# http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
+###
+declare -A COLOR_MAPPING=(
+    ["DEBUG"]="0;36"    # CYAN
+    ["INFO"]="0;32"     # GREEN
+    ["WARNING"]="1;33"  # YELLOW
+    ["WARN"]="1;33"     # YELLOW
+    ["ERROR"]="0;31"    # RED
+    ["CRITICAL"]="1;31" # BRIGHT RED
+    ["EVENT"]="1;32"    # BRIGHT GREEN
+)
+
+function log.info() {
+	local readonly message="$1"
+	shift
+	local readonly kvs=("$@")
+
+	_log "INFO" $message kvs
+}
+
+function log.debug() {
+	local readonly message="$1"
+	shift
+	local readonly kvs=("$@")
+
+	_log "DEBUG" $message kvs
+}
+
+function log.warn() {
+	local readonly message="$1"
+	shift
+	local readonly kvs=("$@")
+
+	_log "WARNING" $message kvs
+}
+
+function log.warning() {
+	local readonly message="$1"
+	shift
+	local readonly kvs=("$@")
+
+	_log "WARNING" $message kvs
+}
+
+function log.error() {
+	local readonly message="$1"
+	shift
+	local readonly kvs=("$@")
+
+	_log "ERROR" $message kvs
+}
+
+function log.error() {
+	local readonly message="$1"
+	shift
+	local readonly kvs=("$@")
+
+	_log "CRITICAL" $message kvs
+}
+
+function log.event() {
+	local readonly message="$1"
+	shift
+	local readonly kvs=("$@")
+
+	_log "EVENT" $message kvs
+}
+
+function _log() {
+  local level="$1"
+  local readonly message="$2"
+  local -n kv="$3"
+  local readonly ugly="${4:-$SHWAIN_UGLY}"
+  local readonly json="${5:-$SHWAIN_JSON}"
+	# If name not provided, default to env var. If env var not provided, default to "SHWAIN"
+  local name="${6:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
+  local readonly color="${7:-$SHWAIN_COLOR}"
+  local readonly simple="${8:-$SHWAIN_SIMPLE}"
+
+  local log='';
+
+  local expanded_message="$message"
+  local readonly pid="$$"
+  local readonly hostname=$(hostname)
+  local readonly timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+  local type="log"
+
+  # We want the type field to be event only if the level is event.
+  if [ "$level" == "EVENT" ] || [ "$level" == "event" ]; then type="event"; fi
+
+	# Enrich kvs
+	kv+=("pid=$pid" "hostname=$hostname" "type=$type")
+
+	for ((i = 0; i < ${#kv[@]}; i++))
+	do
+		expanded_message="$expanded_message"$'\n'"  ${kv[$i]}"
+	done
+
+  if [ ! -z "$json" ]; then
+		# Holy shit this is disgusting. Also, can't pass json as a field.
+		# It's still parsable by jq but still.. oi.
+		# TODO: You know.. make this.. code-not-shit.
+    printf '{\n'
+		# For each key value pair
+    for i in ${kv[@]}; do
+			# split it by `=`
+      IFS='=' read -ra "kvs" <<< "$i"
+      printf "  \"${kvs[0]}\": \"${kvs[1]}\",\n"
+      expanded_message="$expanded_message"$'\n'"  $i"
+    done
+
+    printf "  \"message\": \"${message}\",\n"
+    printf "  \"timestamp\": \"${timestamp}\",\n"
+    printf "  \"name\": \"${name}\",\n"
+    printf "  \"level\": \"${level}\"\n"
+    printf '}'
+  else
+    if [ -z "$simple" ]; then
+        if [ -z "$color" ]; then
+            level="\e[${COLOR_MAPPING[${level^^}]}m${level^^}\e[0m"
+        fi
+        log="$timestamp - $name - $level - ${expanded_message}"
+    else
+        log="$expanded_message"
+    fi
+  fi
+
+  echo -e "$log"
+}
+
+function _main() {
+  getopt --test > /dev/null
+  if [[ $? -ne 4 ]]; then
+      echo "I’m sorry, `getopt --test` failed in this environment."
+      exit 1
+  fi
+
+  OPTIONS=un:j
+  LONGOPTIONS=simple,name:,json,no-color,ugly
+
+  # Temporarily store output to be able to check for errors
+  # e.g. use “--options” parameter by name to activate quoting/enhanced mode
+  # pass arguments only via -- "$@" to separate them correctly
+  PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+
+  if [[ $? -ne 0 ]]; then
+      # e.g. $? == 1
+      #  then getopt has complained about wrong arguments to stdout
+      exit 2
+  fi
+
+  # Read getopt’s output this way to handle the quoting right:
+  eval set -- "$PARSED"
+
+  while true; do
+      case "$1" in
+          -u|--ugly)
+						pretty=y
+						shift
+						;;
+          -j|--json)
+						json=y
+						shift
+						;;
+          -n|--name)
+						name="$2"
+						shift
+						;;
+          --no-color)
+						color=y
+						shift
+						;;
+          --simple)
+						simple=y
+						shift
+						;;
+          --)
+						shift
+						break
+						;;
+      esac
+  done
+
+  # Assign level and message from left-over arguments and then shift
+	# so that `kvs` contains only the key value pairs.
+  local readonly level="$1"
+  local readonly message="$2"
+	shift; shift
+  local readonly kvs=("$@")
+
+	_log "$level" "$message" kvs "$ugly" "$json" "$name" "$color" "$simple"
+}
+
+# Only run main if not sourced.
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  _main "$@"
+fi
