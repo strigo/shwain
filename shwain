@@ -38,6 +38,19 @@ declare -A COLOR_MAPPING=(
   ["EVENT"]="1;32"    # BRIGHT GREEN
 )
 
+declare -A LEVEL_MAPPING=(
+  ["DEBUG"]=1
+  ["INFO"]=2
+  ["WARNING"]=3
+  ["WARN"]=3
+  ["ERROR"]=4
+  ["CRITICAL"]=5
+  ["EVENT"]=6
+)
+
+declare readonly EFFECTIVE_LOG_LEVEL=${EFFECTIVE_LOG_LEVEL:-${LEVEL_MAPPING[DEBUG]}}
+
+
 function log.info() {
   local readonly message="$1"
   shift
@@ -113,6 +126,9 @@ function _log() {
   local readonly hostname=$(hostname)
   local readonly timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
   local type="log"
+
+  # Assert log level
+  (( ${LEVEL_MAPPING[${level^^}]} >= $EFFECTIVE_LOG_LEVEL )) || return 0
 
   # We want the type field to be event only if the level is event.
   if [ "$level" == "EVENT" ] || [ "$level" == "event" ]; then type="event"; fi
