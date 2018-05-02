@@ -45,7 +45,7 @@ log.info woot a=b b=c c=d
 
 ## Errors levels supported
 
-* trace
+* event
 * debug
 * info
 * warn
