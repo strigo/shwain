@@ -20,7 +20,7 @@ Options:
   --enrich           Enrich with additional metadata like hostname, pid, etc..
   -h, --help         Show this message and exit.
 
-$ ./shwain info w00t a=b b=c c=d
+$ ./shwain info w00t a=b b=c c=d -e
 2018-05-02 09:54:38 - SHWAIN - INFO - w00t
   a=b
   b=c
@@ -59,8 +59,7 @@ log.info woot a=b b=c c=d
 All flags are configurable via env vars:
 
 ```shell
-export SHWAIN_flagname  # e.g. if `SHWAIN_JSON` is set, ...
-# (`--no-color` is `SHWAIN_COLOR` wtf inconsistency).
+export SHWAIN_FLAG_NAME  # e.g. if `SHWAIN_JSON` is set, ... dashes are underscores.
 ```
 
 ## Tests

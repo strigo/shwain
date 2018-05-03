@@ -112,7 +112,7 @@ function _shwain.log() {
   local -n kv="$3"
 
   local readonly json="${4:-$SHWAIN_JSON}"
-  local readonly color="${5:-$SHWAIN_COLOR}"
+  local readonly no_color="${5:-$SHWAIN_NO_COLOR}"
   local readonly simple="${6:-$SHWAIN_SIMPLE}"
   local readonly enrich="${7:-$SHWAIN_ENRICH}"
 
@@ -164,10 +164,10 @@ function _shwain.log() {
     printf '}'
   else
     if [ -z "$simple" ]; then
-      if [ -z "$color" ]; then
+      if [ -z "$no_color" ]; then
         level="\e[${COLOR_MAPPING[${level^^}]}m${level}\e[0m"
-        timestamp="\e[32m${timestamp}\e[0m"
-        name="\e[35m${name}\e[0m"
+        timestamp="\e[32m${timestamp}\e[0m"  # Green
+        name="\e[35m${name}\e[0m"  # Purple
       fi
       log="$timestamp - $name - $level - ${message} ${expanded_kv}"
     else
@@ -213,7 +213,7 @@ function _main() {
         shift
         ;;
       --no-color)
-        color=y
+        no_color=y
         shift
         ;;
       --simple)
@@ -250,7 +250,7 @@ function _main() {
   shift; shift
   local readonly kvs=("$@")
 
-  _shwain.log "$level" "$message" kvs "$json" "$color" "$simple" "$enrich" "$name"
+  _shwain.log "$level" "$message" kvs "$json" "$no_color" "$simple" "$enrich" "$name"
 }
 
 # Only run main if not sourced.
