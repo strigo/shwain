@@ -28,19 +28,18 @@ $ ./shwain info w00t a=b b=c c=d -e
   hostname=nir0s-x1
   type=log
 
-$ ./shwain info w00t a=b b=c c=d -e -j
+$ ./shwain error message kern="$(uname -a)" -e -j
 {
-  "a": "b",
-  "b": "c",
-  "c": "d",
-  "pid": "11218",
+  "kern": "Linux nir0s-x1 4.10.0-42-generic #46-Ubuntu SMP Mon Dec 4 14:38:01 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux",
+  "pid": "11480",
   "hostname": "nir0s-x1",
   "type": "log",
-  "timestamp": "2018-05-03 09:12:45",
+  "timestamp": "2018-05-03 09:16:01",
   "name": "SHWAIN",
-  "level": "INFO",
-  "message": "w00t"
+  "level": "ERROR",
+  "message": "message"
 }
+
 ...
 
 ```
@@ -56,6 +55,8 @@ log.info woot a=b b=c c=d
 ...
 
 ```
+
+Don't, forget, bash, expansion, everywhere. Spaces are the devil.
 
 
 ## Errors levels supported
