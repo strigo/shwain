@@ -120,7 +120,6 @@ function _log() {
 
   local log='';
 
-  local expanded_message="$message"
   local readonly pid="$$"
   local readonly hostname=$(hostname)
   local readonly timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
@@ -132,6 +131,7 @@ function _log() {
   # We want the type field to be event only if the level is event.
   if [ "$level" == "EVENT" ] || [ "$level" == "event" ]; then type="event"; fi
 
+  local expanded_kv='  '
   # Enrich kvs
   if [ ! -z $enrich ]; then
     kv+=("pid=$pid" "hostname=$hostname" "type=$type")
@@ -139,35 +139,34 @@ function _log() {
 
   for ((i = 0; i < ${#kv[@]}; i++))
   do
-    expanded_message="$expanded_message"$'\n'"  ${kv[$i]}"
+    expanded_kv="$expanded_kv"$'\n'"  ${kv[$i]}"
   done
 
   if [ ! -z "$json" ]; then
+    kv+=("timestamp=$timestamp" "name=$name" "level=$level")
     # Holy shit this is disgusting. Also, can't pass json as a field.
     # It's still parsable by jq but still.. oi.
     # TODO: You know.. make this.. code-not-shit.
     printf '{\n'
     # For each key value pair
-    for i in ${kv[@]}; do
+    for ((i = 0; i < ${#kv[@]}; i++))
+    do
       # split it by `=`
-      IFS='=' read -ra "kvs" <<< "$i"
-      printf "  \"${kvs[0]}\": \"${kvs[1]}\",\n"
+      IFS='=' read -ra "pair" <<< "${kv[$i]}"
+      printf "  \"${pair[0]}\": \"${pair[1]}\",\n"
       expanded_message="$expanded_message"$'\n'"  $i"
     done
 
-    printf "  \"message\": \"${message}\",\n"
-    printf "  \"timestamp\": \"${timestamp}\",\n"
-    printf "  \"name\": \"${name}\",\n"
-    printf "  \"level\": \"${level}\"\n"
+    printf "  \"message\": \"${message}\"\n"
     printf '}'
   else
     if [ -z "$simple" ]; then
       if [ -z "$color" ]; then
         level="\e[${COLOR_MAPPING[${level^^}]}m${level^^}\e[0m"
       fi
-      log="$timestamp - $name - $level - ${expanded_message}"
+      log="$timestamp - $name - $level - ${message} ${expanded_kv}"
     else
-      log="$expanded_message"
+      log="$message"
     fi
   fi
 

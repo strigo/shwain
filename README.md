@@ -13,7 +13,6 @@ $ ./shwain -h
 Usage: shwain [OPTIONS] LEVEL MESSAGE [OBJECTS]...
 
 Options:
-  --pretty / --ugly  Output JSON instead of key=value pairs for console logger
   -j, --json         Use the JSON logger formatter instead of the console one
   -n, --name TEXT    Change the default logger's name
   --no-color         Disable coloring in console formatter
