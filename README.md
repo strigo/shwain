@@ -19,14 +19,11 @@ Options:
   --enrich           Enrich with additional metadata like hostname, pid, etc..
   -h, --help         Show this message and exit.
 
-$ ./shwain info w00t a=b b=c c=d -e
+$ ./shwain info w00t a=b b=c c=d
 2018-05-02 09:54:38 - SHWAIN - INFO - w00t
   a=b
   b=c
   c=d
-  pid=22191
-  hostname=nir0s-x1
-  type=log
 
 $ ./shwain error message kern="$(uname -a)" -e -j
 {
@@ -37,7 +34,11 @@ $ ./shwain error message kern="$(uname -a)" -e -j
   "timestamp": "2018-05-03 09:16:01",
   "name": "SHWAIN",
   "level": "ERROR",
-  "message": "message"
+  "message": "message",
+  "ec2_instance_id"="i-0074c2ab2bf9e0a31",
+  "ec2_instance_type"="t2.micro",
+  "ec2_region"="eu-west-1b",
+  "ec2_ipv4"="172.16.46.73"
 }
 
 ...

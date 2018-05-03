@@ -106,6 +106,13 @@ function log.event() {
   _shwain.log "EVENT" $message kvs
 }
 
+function ec2_attr() {
+  local readonly attribute="$1"
+
+  response="$(curl -s http://169.254.169.254/latest/meta-data/$attribute)"
+  echo $response
+}
+
 function _shwain.log() {
   local level="${1^^}"
   local readonly message="$2"
@@ -138,6 +145,20 @@ function _shwain.log() {
   # Enrich kvs
   if [ ! -z $enrich ]; then
     kv+=("pid=$pid" "hostname=$hostname" "type=$type")
+
+    local readonly ec2_instance_id=$(ec2_attr "instance-id")
+    if [ ! -z "$ec2_instance_id" ]; then
+      local readonly ec2_instance_type=$(ec2_attr "instance-type")
+      local readonly ec2_region=$(ec2_attr "placement/availability-zone")
+      local readonly ec2_ipv4=$(ec2_attr "local-ipv4")
+
+      kv+=(
+        "ec2_instance_id=$ec2_instance_id"
+        "ec2_instance_type=$ec2_instance_type"
+        "ec2_region=$ec2_region"
+        "ec2_ipv4=$ec2_ipv4"
+      )
+    fi
   fi
 
   for ((i = 0; i < ${#kv[@]}; i++))
