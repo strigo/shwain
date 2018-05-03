@@ -167,6 +167,8 @@ function _shwain.log() {
     if [ -z "$simple" ]; then
       if [ -z "$color" ]; then
         level="\e[${COLOR_MAPPING[${level^^}]}m${level}\e[0m"
+        timestamp="\e[32m${timestamp}\e[0m"
+        name="\e[35m${name}\e[0m"
       fi
       log="$timestamp - $name - $level - ${message} ${expanded_kv}"
     else
