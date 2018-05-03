@@ -107,7 +107,7 @@ function log.event() {
 }
 
 function _log() {
-  local level="$1"
+  local level="${1^^}"
   local readonly message="$2"
   local -n kv="$3"
   local readonly json="${4:-$SHWAIN_JSON}"
@@ -125,11 +125,15 @@ function _log() {
   local readonly timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
   local type="log"
 
+  if [[ ! "${!LEVEL_MAPPING[@]}" == *"${level}"* ]]; then
+    echo "Unknown level. Please use one of [${!LEVEL_MAPPING[@]}] (hint: you can use lowercase)"
+    exit 1
+  fi
   # Assert log level
-  (( ${LEVEL_MAPPING[${level^^}]} >= $EFFECTIVE_LOG_LEVEL )) || return 0
+  (( ${LEVEL_MAPPING[${level}]} >= $EFFECTIVE_LOG_LEVEL )) || return 0
 
   # We want the type field to be event only if the level is event.
-  if [ "$level" == "EVENT" ] || [ "$level" == "event" ]; then type="event"; fi
+  if [ "$level" == "EVENT" ]; then type="event"; fi
 
   local expanded_kv='  '
   # Enrich kvs
@@ -162,7 +166,7 @@ function _log() {
   else
     if [ -z "$simple" ]; then
       if [ -z "$color" ]; then
-        level="\e[${COLOR_MAPPING[${level^^}]}m${level^^}\e[0m"
+        level="\e[${COLOR_MAPPING[${level^^}]}m${level}\e[0m"
       fi
       log="$timestamp - $name - $level - ${message} ${expanded_kv}"
     else
