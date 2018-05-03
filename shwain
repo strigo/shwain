@@ -110,20 +110,19 @@ function _shwain.log() {
   local level="${1^^}"
   local readonly message="$2"
   local -n kv="$3"
+
   local readonly json="${4:-$SHWAIN_JSON}"
+  local readonly color="${5:-$SHWAIN_COLOR}"
+  local readonly simple="${6:-$SHWAIN_SIMPLE}"
+  local readonly enrich="${7:-$SHWAIN_ENRICH}"
 
-  # If name not provided, default to env var. If env var not provided, default to "SHWAIN"
-  local name="${5:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
-  local readonly color="${6:-$SHWAIN_COLOR}"
-  local readonly simple="${7:-$SHWAIN_SIMPLE}"
-  local readonly enrich="${8:-$SHWAIN_ENRICH}"
-
+  local name="${8:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
   local log='';
+  local type="log"
 
   local readonly pid="$$"
   local readonly hostname=$(hostname)
   local readonly timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
-  local type="log"
 
   if [[ ! "${!LEVEL_MAPPING[@]}" == *"${level}"* ]]; then
     echo "Unknown level. Please use one of [${!LEVEL_MAPPING[@]}] (hint: you can use lowercase)"
@@ -251,7 +250,7 @@ function _main() {
   shift; shift
   local readonly kvs=("$@")
 
-  _shwain.log "$level" "$message" kvs "$json" "$name" "$color" "$simple" "$enrich"
+  _shwain.log "$level" "$message" kvs "$json" "$color" "$simple" "$enrich" "$name"
 }
 
 # Only run main if not sourced.
