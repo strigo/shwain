@@ -55,7 +55,7 @@ function log.info() {
   shift
   local readonly kvs=("$@")
 
-  _log "INFO" $message kvs
+  _shwain.log "INFO" $message kvs
 }
 
 function log.debug() {
@@ -63,7 +63,7 @@ function log.debug() {
   shift
   local readonly kvs=("$@")
 
-  _log "DEBUG" $message kvs
+  _shwain.log "DEBUG" $message kvs
 }
 
 function log.warn() {
@@ -71,7 +71,7 @@ function log.warn() {
   shift
   local readonly kvs=("$@")
 
-  _log "WARNING" $message kvs
+  _shwain.log "WARNING" $message kvs
 }
 
 function log.warning() {
@@ -79,7 +79,7 @@ function log.warning() {
   shift
   local readonly kvs=("$@")
 
-  _log "WARNING" $message kvs
+  _shwain.log "WARNING" $message kvs
 }
 
 function log.error() {
@@ -87,7 +87,7 @@ function log.error() {
   shift
   local readonly kvs=("$@")
 
-  _log "ERROR" $message kvs
+  _shwain.log "ERROR" $message kvs
 }
 
 function log.error() {
@@ -95,7 +95,7 @@ function log.error() {
   shift
   local readonly kvs=("$@")
 
-  _log "CRITICAL" $message kvs
+  _shwain.log "CRITICAL" $message kvs
 }
 
 function log.event() {
@@ -103,10 +103,10 @@ function log.event() {
   shift
   local readonly kvs=("$@")
 
-  _log "EVENT" $message kvs
+  _shwain.log "EVENT" $message kvs
 }
 
-function _log() {
+function _shwain.log() {
   local level="${1^^}"
   local readonly message="$2"
   local -n kv="$3"
@@ -249,7 +249,7 @@ function _main() {
   shift; shift
   local readonly kvs=("$@")
 
-  _log "$level" "$message" kvs "$json" "$name" "$color" "$simple" "$enrich"
+  _shwain.log "$level" "$message" kvs "$json" "$name" "$color" "$simple" "$enrich"
 }
 
 # Only run main if not sourced.
