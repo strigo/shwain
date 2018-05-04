@@ -8,6 +8,12 @@ Note that the following documentation relates to the code currently in the maste
 AFAIK, shwain only supports bash 4+. If you want a logger for zsh, sh, ksh, tcsh, fish, or whatever the fuck else you think will make you live-a-little-bit-longer-but-still-on-the-verge-of-a-nervous-breakdown, submit a PR.
 
 
+## Installation
+
+```bash
+[[ ! -f "shwain" ]] && curl -LO https://github.com/nir0s/shwain/raw/master/shwain && chmod +x shwain
+```
+
 ## Usage
 
 ```text
@@ -54,8 +60,6 @@ $ ./shwain error message kern="$(uname -a)" -e -j
 From a script:
 
 ```bash
-[[ ! -f "shwain" ]] && curl -L -O https://github.com/nir0s/shwain/raw/master/shwain
-
 . shwain
 
 log.info woot a=b b=c c=d
