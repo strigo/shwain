@@ -33,7 +33,7 @@ $ ./shwain info w00t a=b b=c c=d
 
 $ ./shwain error message kern="$(uname -a)" -e -j
 {
-  "kern": "Linux nir0s-x1 4.10.0-42-generic #46-Ubuntu SMP Mon Dec 4 14:38:01 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux",
+  "kern": "Linux nir0s-x1 4.10.0-42-generic #46-Ubuntu ...",
   "pid": "11480",
   "hostname": "nir0s-x1",
   "type": "log",
