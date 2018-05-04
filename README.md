@@ -101,7 +101,7 @@ Using the `-e` flag or setting the `SHWAIN_ENRICH` env var will make shwain add 
 
 ### If in an EC2 instance
 
-shwain will add several fields related to the instance it is running on. See example in [usage](#Usage).
+shwain will add several fields related to the instance it is running on. See example in [usage](#usage).
 
 
 ## Coloring
