@@ -1,9 +1,12 @@
 shwain
 ======
 
-A sane logger for bash (WIP!)
+Bash sucks. Everyone uses bash. Here's a sane logger for bash.
 
-Note that many features are not implemented yet and that some implementations are pure disgusting-ness.
+Note that the following documentation relates to the code currently in the master branch. If you want to view docs for previous versions, please choose the relevant release in the "releases" tab.
+
+AFAIK, shwain only supports bash 4+. If you want a logger for zsh, sh, ksh, tcsh, fish, or whatever the fuck else you think will make you live-a-little-bit-longer-but-still-on-the-verge-of-a-nervous-breakdown, submit a PR.
+
 
 ## Usage
 
@@ -18,6 +21,9 @@ Options:
   --simple           Log only message to the console
   --enrich           Enrich with additional metadata like hostname, pid, etc..
   -h, --help         Show this message and exit.
+
+$ ./shwain debug "My message"
+2018-05-04 09:41:44 - SHWAIN - DEBUG - My message
 
 $ ./shwain info w00t a=b b=c c=d
 2018-05-02 09:54:38 - SHWAIN - INFO - w00t
@@ -53,22 +59,28 @@ From a script:
 . shwain
 
 log.info woot a=b b=c c=d
+# See more error levels below, which directly map into additional functions.
 ...
 
 ```
 
 Don't, forget, bash, expansion, everywhere. Spaces are the devil.
 
+Note that you can't pass flags to the functions when sourcing. To configure shwain when sourcing, use env vars (see [Env var based config](#Env-var-based-config)).
 
-## Errors levels supported
 
-* event
-* debug
-* info
-* warn
-* warning
-* error
-* critical
+
+## Supported errors levels
+
+* `event`
+* `debug`
+* `info`
+* `warning`
+* `warn`
+* `error`
+* `critical`
+
+When using the CLI, both upper and lower case will work.
 
 
 ## Env var based config
@@ -78,6 +90,34 @@ All flags are configurable via env vars:
 ```shell
 export SHWAIN_FLAG_NAME  # e.g. if `SHWAIN_JSON` is set, ... dashes are underscores.
 ```
+
+## Context enrichment
+
+Using the `-e` flag or setting the `SHWAIN_ENRICH` env var will make shwain add several fields to each message's context, namely, `pid` and `hostname`.
+
+### If in an EC2 instance
+
+shwain will add several fields related to the instance it is running on. See example in [usage](#Usage).
+
+
+## Coloring
+
+Error levels will be colored according to the following mapping:
+
+```bash
+declare -A COLOR_MAPPING=(
+  ["DEBUG"]="0;36"    # CYAN
+  ["INFO"]="0;32"     # GREEN
+  ["WARNING"]="1;33"  # YELLOW
+  ["WARN"]="1;33"     # YELLOW
+  ["ERROR"]="0;31"    # RED
+  ["CRITICAL"]="1;31" # BRIGHT RED
+  ["EVENT"]="1;32"    # BRIGHT GREEN
+)
+```
+
+You can disable coloring by using the `--no-color` flag or setting the `SHWAIN_NO_COLOR` env var.
+
 
 ## Tests
 
