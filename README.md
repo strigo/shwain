@@ -70,7 +70,7 @@ log.info woot a=b b=c c=d
 
 Don't, forget, bash, expansion, everywhere. Spaces are the devil.
 
-Note that you can't pass flags to the functions when sourcing. To configure shwain when sourcing, use env vars (see [Env var based config](#Env-var-based-config)).
+Note that you can't pass flags to the functions when sourcing. To configure shwain when sourcing, use env vars (see [Env var based config](#env-var-based-config)).
 
 
 
