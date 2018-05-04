@@ -1,7 +1,7 @@
 shwain
 ======
 
-Bash sucks. Everyone uses bash. Here's a sane logger for bash.
+`bash` sucks. Everyone uses `bash`. Here's a sane logger for `bash`.
 
 Note that the following documentation relates to the code currently in the master branch. If you want to view docs for previous versions, please choose the relevant release in the "releases" tab.
 
