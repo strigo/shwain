@@ -90,7 +90,7 @@ function log.error() {
   _shwain.log "ERROR" $message kvs
 }
 
-function log.error() {
+function log.critical() {
   local readonly message="$1"
   shift
   local readonly kvs=("$@")
