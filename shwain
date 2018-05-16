@@ -15,6 +15,7 @@
 # http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 ###
 
+declare readonly VERSION="0.1.0"
 
 declare readonly USAGE="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
 
