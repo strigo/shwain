@@ -11,7 +11,17 @@ AFAIK, shwain only supports bash 4+. If you want a logger for zsh, sh, ksh, tcsh
 ## Installation
 
 ```bash
-[[ ! -f "shwain" ]] && curl -LO https://github.com/nir0s/shwain/raw/master/shwain && chmod +x shwain
+Install locally:
+
+[[ ! -f "shwain" ]] && \
+	curl -LO https://github.com/nir0s/shwain/raw/master/shwain && \
+	chmod +x shwain
+
+or directly to your path (don't be daft. we sudo):
+
+[[ ! -f "/usr/bin/shwain" ]] && \
+	sudo curl -L https://github.com/nir0s/shwain/raw/master/shwain -o /usr/bin/shwain && \
+	sudo chmod +x /usr/bin/shwain
 ```
 
 ## Usage
