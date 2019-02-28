@@ -5,7 +5,7 @@ shwain
 
 Note that the following documentation relates to the code currently in the master branch. If you want to view docs for previous versions, please choose the relevant release in the "releases" tab.
 
-AFAIK, shwain only supports bash 4+. If you want a logger for zsh, sh, ksh, tcsh, fish, or whatever the fuck else you think will make you live-a-little-bit-longer-but-still-on-the-verge-of-a-nervous-breakdown, submit a PR.
+AFAIK, shwain only supports bash 4+. If you want a logger for zsh, sh, ksh, tcsh, fish, or whatever else you think will make you live-a-little-bit-longer-but-still-on-the-verge-of-a-nervous-breakdown, submit a PR.
 
 
 ## Installation
@@ -17,7 +17,7 @@ Install locally:
 	curl -LO https://github.com/nir0s/shwain/raw/master/shwain && \
 	chmod +x shwain
 
-or directly to your path (don't be daft. we sudo):
+or directly to your path (Yes, we sudo):
 
 [[ ! -f "/usr/bin/shwain" ]] && \
 	sudo curl -L https://github.com/nir0s/shwain/raw/master/shwain -o /usr/bin/shwain && \
@@ -78,7 +78,7 @@ log.info woot a=b b=c c=d
 
 ```
 
-Don't, forget, bash, expansion, everywhere. Spaces are the devil.
+Don't, forget, bash, expansion, everywhere. Spaces are evil.
 
 Note that you can't pass flags to the functions when sourcing. To configure shwain when sourcing, use env vars (see [Env var based config](#env-var-based-config)).
 
@@ -135,4 +135,4 @@ You can disable coloring by using the `--no-color` flag or setting the `SHWAIN_N
 
 ## Tests
 
-Currently tested by a group of dwarves inside my head.
+Working on BATS testing.
