@@ -135,4 +135,13 @@ You can disable coloring by using the `--no-color` flag or setting the `SHWAIN_N
 
 ## Tests
 
-Working on BATS testing.
+To run tests locally:
+
+```shell
+$ npm install bats
+...
+$ git submodule init
+$ git submodule update --remote
+$ node_modules/bats/bin/bats test/*.bats
+```
+
