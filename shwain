@@ -25,6 +25,7 @@ Options:
   --no-color         Disable coloring in console formatter
   --simple           Log only message to the console
   --enrich           Enrich with additional metadata like hostname, pid, etc..
+  --aws              Enrich with additional, AWS specific metadata
   -h, --help         Show this message and exit.
 "
 
@@ -123,8 +124,9 @@ function _shwain.log() {
   local -r no_color="${5:-$SHWAIN_NO_COLOR}"
   local -r simple="${6:-$SHWAIN_SIMPLE}"
   local -r enrich="${7:-$SHWAIN_ENRICH}"
+  local -r aws="${8:-$SHWAIN_AWS}"
 
-  local name="${8:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
+  local name="${9:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
   local log='';
   local type="log"
 
@@ -147,18 +149,20 @@ function _shwain.log() {
   if [ ! -z $enrich ]; then
     kv+=("pid=$pid" "hostname=$hostname" "type=$type")
 
-    local -r ec2_instance_id=$(ec2_attr "instance-id")
-    if [ ! -z "$ec2_instance_id" ]; then
-      local -r ec2_instance_type=$(ec2_attr "instance-type")
-      local -r ec2_region=$(ec2_attr "placement/availability-zone")
-      local -r ec2_ipv4=$(ec2_attr "local-ipv4")
+    if [ ! -z "$aws" ]; then
+      local -r ec2_instance_id=$(ec2_attr "instance-id")
+      if [ ! -z "$ec2_instance_id" ]; then
+        local -r ec2_instance_type=$(ec2_attr "instance-type")
+        local -r ec2_region=$(ec2_attr "placement/availability-zone")
+        local -r ec2_ipv4=$(ec2_attr "local-ipv4")
 
-      kv+=(
-        "ec2_instance_id=$ec2_instance_id"
-        "ec2_instance_type=$ec2_instance_type"
-        "ec2_region=$ec2_region"
-        "ec2_ipv4=$ec2_ipv4"
-      )
+        kv+=(
+          "ec2_instance_id=$ec2_instance_id"
+          "ec2_instance_type=$ec2_instance_type"
+          "ec2_region=$ec2_region"
+          "ec2_ipv4=$ec2_ipv4"
+        )
+      fi
     fi
   fi
 
@@ -208,7 +212,7 @@ function _main() {
   fi
 
   OPTIONS=hn:je
-  LONGOPTIONS=simple,name:,json,no-color,help,enrich
+  LONGOPTIONS=simple,name:,json,no-color,help,enrich,aws
 
   # Temporarily store output to be able to check for errors
   # e.g. use “--options” parameter by name to activate quoting/enhanced mode
@@ -246,6 +250,10 @@ function _main() {
         enrich=n
         shift
         ;;
+      --aws)
+        aws=n
+        shift
+        ;;
       -h|--help)
         echo "$USAGE"
         exit 0
@@ -272,7 +280,7 @@ function _main() {
   shift; shift
   local kvs=("$@")
 
-  _shwain.log "$level" "$message" kvs "$json" "$no_color" "$simple" "$enrich" "$name"
+  _shwain.log "$level" "$message" kvs "$json" "$no_color" "$simple" "$enrich" "$aws" "$name"
 }
 
 # Only run main if not sourced.

@@ -49,7 +49,7 @@ $ ./shwain info w00t a=b b=c c=d
   b=c
   c=d
 
-$ ./shwain error message kern="$(uname -a)" -e -j
+$ ./shwain error message kern="$(uname -a)" -e -j --aws
 {
   "kern": "Linux nir0s-x1 4.10.0-42-generic #46-Ubuntu ...",
   "pid": "11480",
