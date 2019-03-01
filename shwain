@@ -208,7 +208,7 @@ function _main() {
   fi
 
   OPTIONS=hn:je
-  LONGOPTIONS=simple,name:,json,no-color,help,no-enrich
+  LONGOPTIONS=simple,name:,json,no-color,help,enrich
 
   # Temporarily store output to be able to check for errors
   # e.g. use “--options” parameter by name to activate quoting/enhanced mode
