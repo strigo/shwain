@@ -20,6 +20,10 @@ jobs:
           name: Test CLI
           command: node_modules/bats/bin/bats test/shwain-cli.bats
 
+      - run:
+          name: Test API
+          command: node_modules/bats/bin/bats test/shwain-api.bats
+
       - save_cache:
           paths:
             - node_modules
