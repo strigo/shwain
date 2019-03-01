@@ -15,9 +15,9 @@
 # http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 ###
 
-declare readonly VERSION="0.1.0"
+declare -r VERSION="0.1.0"
 
-declare readonly USAGE="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
+declare -r USAGE="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
 
 Options:
   -j, --json         Use the JSON logger formatter instead of the console one
@@ -28,7 +28,7 @@ Options:
   -h, --help         Show this message and exit.
 "
 
-declare -A COLOR_MAPPING=(
+declare -r -A COLOR_MAPPING=(
   ["DEBUG"]="0;36"    # CYAN
   ["INFO"]="0;32"     # GREEN
   ["WARNING"]="1;33"  # YELLOW
@@ -38,7 +38,7 @@ declare -A COLOR_MAPPING=(
   ["EVENT"]="1;32"    # BRIGHT GREEN
 )
 
-declare -A LEVEL_MAPPING=(
+declare -r -A LEVEL_MAPPING=(
   ["DEBUG"]=1
   ["INFO"]=2
   ["WARNING"]=3
@@ -48,67 +48,67 @@ declare -A LEVEL_MAPPING=(
   ["EVENT"]=6
 )
 
-declare readonly EFFECTIVE_LOG_LEVEL=${EFFECTIVE_LOG_LEVEL:-${LEVEL_MAPPING[DEBUG]}}
+declare -r EFFECTIVE_LOG_LEVEL=${EFFECTIVE_LOG_LEVEL:-${LEVEL_MAPPING[DEBUG]}}
 
 
 function log.info() {
-  local readonly message="$1"
+  local -r message="$1"
   shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "INFO" "$message" kvs
 }
 
 function log.debug() {
-  local readonly message="$1"
+  local -r message="$1"
   shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "DEBUG" "$message" kvs
 }
 
 function log.warn() {
-  local readonly message="$1"
+  local -r message="$1"
   shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "WARNING" "$message" kvs
 }
 
 function log.warning() {
-  local readonly message="$1"
+  local -r message="$1"
   shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "WARNING" "$message" kvs
 }
 
 function log.error() {
-  local readonly message="$1"
+  local -r message="$1"
   shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "ERROR" "$message" kvs
 }
 
 function log.critical() {
-  local readonly message="$1"
+  local -r message="$1"
   shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "CRITICAL" "$message" kvs
 }
 
 function log.event() {
-  local readonly message="$1"
+  local -r message="$1"
   shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "EVENT" "$message" kvs
 }
 
 function ec2_attr() {
-  local readonly attribute="$1"
+  local attribute="$1"
 
   response="$(curl -s http://169.254.169.254/latest/meta-data/$attribute)"
   echo $response
@@ -116,21 +116,21 @@ function ec2_attr() {
 
 function _shwain.log() {
   local level="${1^^}"
-  local readonly message="$2"
+  local -r message="$2"
   local -n kv="$3"
 
-  local readonly json="${4:-$SHWAIN_JSON}"
-  local readonly no_color="${5:-$SHWAIN_NO_COLOR}"
-  local readonly simple="${6:-$SHWAIN_SIMPLE}"
-  local readonly enrich="${7:-$SHWAIN_ENRICH}"
+  local -r json="${4:-$SHWAIN_JSON}"
+  local -r no_color="${5:-$SHWAIN_NO_COLOR}"
+  local -r simple="${6:-$SHWAIN_SIMPLE}"
+  local -r enrich="${7:-$SHWAIN_ENRICH}"
 
   local name="${8:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
   local log='';
   local type="log"
 
-  local readonly pid="$$"
-  local readonly hostname=$(hostname)
-  local readonly timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+  local -r pid="$$"
+  local -r hostname=$(hostname)
+  local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
 
   if [[ ! "${!LEVEL_MAPPING[@]}" == *"${level}"* ]]; then
     echo "Unknown level. Please use one of [${!LEVEL_MAPPING[@]}] (hint: you can use lowercase)"
@@ -147,11 +147,11 @@ function _shwain.log() {
   if [ ! -z $enrich ]; then
     kv+=("pid=$pid" "hostname=$hostname" "type=$type")
 
-    local readonly ec2_instance_id=$(ec2_attr "instance-id")
+    local -r ec2_instance_id=$(ec2_attr "instance-id")
     if [ ! -z "$ec2_instance_id" ]; then
-      local readonly ec2_instance_type=$(ec2_attr "instance-type")
-      local readonly ec2_region=$(ec2_attr "placement/availability-zone")
-      local readonly ec2_ipv4=$(ec2_attr "local-ipv4")
+      local -r ec2_instance_type=$(ec2_attr "instance-type")
+      local -r ec2_region=$(ec2_attr "placement/availability-zone")
+      local -r ec2_ipv4=$(ec2_attr "local-ipv4")
 
       kv+=(
         "ec2_instance_id=$ec2_instance_id"
@@ -267,10 +267,10 @@ function _main() {
 
   # Assign level and message from left-over arguments and then shift
   # so that `kvs` contains only the key value pairs.
-  local readonly level="$1"
-  local readonly message="$2"
+  local -r level="$1"
+  local -r message="$2"
   shift; shift
-  local readonly kvs=("$@")
+  local kvs=("$@")
 
   _shwain.log "$level" "$message" kvs "$json" "$no_color" "$simple" "$enrich" "$name"
 }
