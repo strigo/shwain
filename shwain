@@ -51,6 +51,12 @@ declare -r -A LEVEL_MAPPING=(
 
 declare -r EFFECTIVE_LOG_LEVEL=${EFFECTIVE_LOG_LEVEL:-${LEVEL_MAPPING[DEBUG]}}
 
+######
+# Public: Emit an INFO-level log message
+#
+# $1 (message) The message to emit.
+# $@ (kvs) k=v pairs to use as context.
+######
 function log.info() {
   local -r message="$1"
   shift
@@ -59,6 +65,12 @@ function log.info() {
   _shwain.log "INFO" "$message" kvs
 }
 
+######
+# Public: Emit a DEBUG-level log message
+#
+# $1 (message) The message to emit.
+# $@ (kvs) k=v pairs to use as context.
+######
 function log.debug() {
   local -r message="$1"
   shift
@@ -67,6 +79,12 @@ function log.debug() {
   _shwain.log "DEBUG" "$message" kvs
 }
 
+######
+# Public: Emit a WARNING-level log message
+#
+# $1 (message) The message to emit.
+# $@ (kvs) k=v pairs to use as context.
+######
 function log.warn() {
   local -r message="$1"
   shift
@@ -75,6 +93,12 @@ function log.warn() {
   _shwain.log "WARNING" "$message" kvs
 }
 
+######
+# Public: Emit a WARNING-level log message
+#
+# $1 (message) The message to emit.
+# $@ (kvs) k=v pairs to use as context.
+######
 function log.warning() {
   local -r message="$1"
   shift
@@ -83,6 +107,12 @@ function log.warning() {
   _shwain.log "WARNING" "$message" kvs
 }
 
+######
+# Public: Emit an ERROR-level log message
+#
+# $1 (message) The message to emit.
+# $@ (kvs) k=v pairs to use as context.
+######
 function log.error() {
   local -r message="$1"
   shift
@@ -91,6 +121,12 @@ function log.error() {
   _shwain.log "ERROR" "$message" kvs
 }
 
+######
+# Public: Emit a CRITICAL-level log message
+#
+# $1 (message) The message to emit.
+# $@ (kvs) k=v pairs to use as context.
+######
 function log.critical() {
   local -r message="$1"
   shift
@@ -99,6 +135,12 @@ function log.critical() {
   _shwain.log "CRITICAL" "$message" kvs
 }
 
+######
+# Public: Emit an EVENT-typed log message
+#
+# $1 (message) The message to emit.
+# $@ (kvs) k=v pairs to use as context.
+######
 function log.event() {
   local -r message="$1"
   shift
@@ -107,13 +149,44 @@ function log.event() {
   _shwain.log "EVENT" "$message" kvs
 }
 
-function ec2_attr() {
+######
+# Private: Retrieve the value of an EC2 Instance attribute.
+#
+# $1 (attribute) The name of the attribute to fetch.
+#
+# Examples:
+#
+#   _ec2_attr instance-type
+#   # => 't2.xlarge'
+#
+# Return the value of the desired attribute.
+######
+function _ec2_attr() {
   local attribute="$1"
 
   response="$(curl -s http://169.254.169.254/latest/meta-data/$attribute)"
   echo $response
 }
 
+######
+# Private: Emit a log message to the console
+#
+# $1 (level) The severity level.
+# $2 (message) The message field.
+# $3 (sample) A list of kv pairs.
+# $4 (json) Whether to emit json or human readable text.
+# $5 (no_color) Whether to remove colored output.
+# $6 (simple) Whether to emit simply formatted messages.
+# $7 (enrich) Whether to enrich a message with additional kvs.
+# $8 (aws) Whether to enrich (if on AWS instance) with additonal, AWS-spepcific kvs.
+# $9 (name) The name of the logger.
+#
+# Examples:
+#
+#   _shwain.log INFO "My Message" k=v
+#   # => '2019-03-09 22:44:36 - SHWAIN - INFO - My Message'
+#           k=v
+######
 function _shwain.log() {
   local level="${1^^}"
   local -r message="$2"
@@ -160,11 +233,11 @@ function _shwain.log() {
     kv+=("pid=$pid" "hostname=$hostname" "type=$type")
 
     if [ ! -z "$aws" ]; then
-      local -r ec2_instance_id=$(ec2_attr "instance-id")
+      local -r ec2_instance_id=$(_ec2_attr "instance-id")
       if [ ! -z "$ec2_instance_id" ]; then
-        local -r ec2_instance_type=$(ec2_attr "instance-type")
-        local -r ec2_region=$(ec2_attr "placement/availability-zone")
-        local -r ec2_ipv4=$(ec2_attr "local-ipv4")
+        local -r ec2_instance_type=$(_ec2_attr "instance-type")
+        local -r ec2_region=$(_ec2_attr "placement/availability-zone")
+        local -r ec2_ipv4=$(_ec2_attr "local-ipv4")
 
         kv+=(
           "ec2_instance_id=$ec2_instance_id"
