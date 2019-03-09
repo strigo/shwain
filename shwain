@@ -135,6 +135,8 @@ function _shwain.log() {
 
   local output_stream
 
+  if [ "$level" == "WARN" ]; then level="WARNING"; fi
+
   # Determine whether output stream should be stdout or stderr
   if [ "$level" == "WARNING" ] || [ "$level" == "ERROR" ] || [ "$level" == "CRITICAL" ]; then
     output_stream=2
