@@ -51,7 +51,6 @@ declare -r -A LEVEL_MAPPING=(
 
 declare -r EFFECTIVE_LOG_LEVEL=${EFFECTIVE_LOG_LEVEL:-${LEVEL_MAPPING[DEBUG]}}
 
-
 function log.info() {
   local -r message="$1"
   shift
@@ -127,12 +126,21 @@ function _shwain.log() {
   local -r aws="${8:-$SHWAIN_AWS}"
 
   local name="${9:-$SHWAIN_NAME}"; name="${name:-SHWAIN}"
-  local log='';
+  local log=''
   local type="log"
 
   local -r pid="$$"
   local -r hostname=$(hostname)
   local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+
+  local output_stream
+
+  # Determine whether output stream should be stdout or stderr
+  if [ "$level" == "WARNING" ] || [ "$level" == "ERROR" ] || [ "$level" == "CRITICAL" ]; then
+    output_stream=2
+  else
+    output_stream=1
+  fi
 
   if [[ ! "${!LEVEL_MAPPING[@]}" == *"${level}"* ]]; then
     echo "Unknown level. Please use one of [${!LEVEL_MAPPING[@]}] (hint: you can use lowercase)"
@@ -201,7 +209,7 @@ function _shwain.log() {
     fi
   fi
 
-  echo -e "$log"
+  echo -e "$log" >&${output_stream}
 }
 
 function _main() {
