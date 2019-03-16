@@ -15,9 +15,10 @@
 # http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 ###
 
+# shellcheck disable=SC2034
 declare -r VERSION="0.1.0"
 
-declare -r USAGE="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
+USAGE="Usage: $(basename "$0") [OPTIONS] LEVEL MESSAGE [OBJECTS]...
 
 Options:
   -j, --json         Use the JSON logger formatter instead of the console one
@@ -164,8 +165,8 @@ function log.event() {
 function _ec2_attr() {
   local attribute="$1"
 
-  response="$(curl -s http://169.254.169.254/latest/meta-data/$attribute)"
-  echo $response
+  response=$(curl -s "http://169.254.169.254/latest/meta-data/$attribute")
+  echo "$response"
 }
 
 ######
@@ -204,9 +205,11 @@ function _shwain.log() {
 
   local -r pid="$$"
   local -r hostname=$(hostname)
-  local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+  local timestamp
 
   local output_stream
+
+  timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
 
   if [ "$level" == "WARN" ]; then level="WARNING"; fi
 
@@ -217,24 +220,24 @@ function _shwain.log() {
     output_stream=1
   fi
 
-  if [[ ! "${!LEVEL_MAPPING[@]}" == *"${level}"* ]]; then
-    echo "Unknown level. Please use one of [${!LEVEL_MAPPING[@]}] (hint: you can use lowercase)"
+  if [[ ! "${!LEVEL_MAPPING[*]}" == *"${level}"* ]]; then
+    echo "Unknown level. Please use one of [${!LEVEL_MAPPING[*]}] (hint: you can use lowercase)"
     exit 1
   fi
   # Assert log level
-  (( ${LEVEL_MAPPING[${level}]} >= $EFFECTIVE_LOG_LEVEL )) || return 0
+  (( ${LEVEL_MAPPING[${level}]} >= EFFECTIVE_LOG_LEVEL )) || return 0
 
   # We want the type field to be event only if the level is event.
   if [ "$level" == "EVENT" ]; then type="event"; fi
 
   local expanded_kv='  '
   # Enrich kvs
-  if [ ! -z $enrich ]; then
+  if [[ "$enrich" ]]; then
     kv+=("pid=$pid" "hostname=$hostname" "type=$type")
 
-    if [ ! -z "$aws" ]; then
+    if [[ "$aws" ]]; then
       local -r ec2_instance_id=$(_ec2_attr "instance-id")
-      if [ ! -z "$ec2_instance_id" ]; then
+      if [[ "$ec2_instance_id" ]]; then
         local -r ec2_instance_type=$(_ec2_attr "instance-type")
         local -r ec2_region=$(_ec2_attr "placement/availability-zone")
         local -r ec2_ipv4=$(_ec2_attr "local-ipv4")
@@ -254,7 +257,7 @@ function _shwain.log() {
     expanded_kv="$expanded_kv"$'\n'"  ${kv[$i]}"
   done
 
-  if [ ! -z "$json" ]; then
+  if [[ "$json" ]]; then
     kv+=("timestamp=$timestamp" "name=$name" "level=$level")
     # Holy shit this is disgusting. Also, can't pass json as a field.
     # It's still parsable by jq but still.. oi.
@@ -265,11 +268,11 @@ function _shwain.log() {
     do
       # split it by `=`
       IFS='=' read -ra "pair" <<< "${kv[$i]}"
-      printf "  \"${pair[0]}\": \"${pair[1]}\",\n"
+      printf '  "%s": "%s",\n' "${pair[0]}" "${pair[1]}"
       expanded_message="$expanded_message"$'\n'"  $i"
     done
 
-    printf "  \"message\": \"${message}\"\n"
+    printf '  "message": "%s"' "$message"
     printf '}'
   else
     if [ -z "$simple" ]; then
@@ -290,7 +293,7 @@ function _shwain.log() {
 function _main() {
   getopt --test > /dev/null
   if [[ $? -ne 4 ]]; then
-    echo "I’m sorry, `getopt --test` failed in this environment."
+    echo "I’m sorry, $(getopt --test) failed in this environment."
     exit 1
   fi
 
@@ -300,9 +303,7 @@ function _main() {
   # Temporarily store output to be able to check for errors
   # e.g. use “--options” parameter by name to activate quoting/enhanced mode
   # pass arguments only via -- "$@" to separate them correctly
-  PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
-
-  if [[ $? -ne 0 ]]; then
+  if ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@"); then
       # e.g. $? == 1
       #  then getopt has complained about wrong arguments to stdout
       exit 2
