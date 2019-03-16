@@ -1,5 +1,14 @@
 version: 2
 jobs:
+  shellcheck:
+    docker:
+      - image: koalaman/shellcheck-alpine:stable
+    steps:
+      - checkout
+      - run:
+          name: Run shellcheck
+          command: shellcheck ./shwain
+
   build:
     docker:
       - image: circleci/node:10.9.0
@@ -39,7 +48,10 @@ workflows:
   version: 2
   build-workflow:
     jobs:
+      - shellcheck
       - build:
+          requires:
+            - shellcheck
           filters:
             tags:
               only: /.*/
