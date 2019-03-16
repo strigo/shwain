@@ -3,12 +3,11 @@ shwain
 
 [![Circle CI](https://circleci.com/gh/strigo/shwain.svg?style=shield)](https://circleci.com/gh/strigo/shwain)
 
-`bash` sucks. Everyone uses `bash`. Here's a sane logger for `bash`.
+Everyone uses `bash`. Here's a sane logger for `bash`.
 
 Note that the following documentation relates to the code currently in the master branch. If you want to view docs for previous versions, please choose the relevant release in the "releases" tab.
 
-AFAIK, shwain only supports bash 4+. If you want a logger for zsh, sh, ksh, tcsh, fish, or whatever else you think will make you live-a-little-bit-longer-but-still-on-the-verge-of-a-nervous-breakdown, submit a PR.
-
+AFAWK, shwain only supports bash 4+.
 
 ## Installation
 
@@ -18,9 +17,11 @@ Install locally:
 [[ ! -f "shwain" ]] && \
 	curl -LO https://github.com/strigo/shwain/raw/master/shwain && \
 	chmod +x shwain
+```
 
-or directly to your path (Yes, we sudo):
+Install directly to your path (Yes, we sudo):
 
+```bash
 [[ ! -f "/usr/bin/shwain" ]] && \
 	sudo curl -L https://github.com/strigo/shwain/raw/master/shwain -o /usr/bin/shwain && \
 	sudo chmod +x /usr/bin/shwain
@@ -80,7 +81,7 @@ log.info woot a=b b=c c=d
 
 ```
 
-Don't, forget, bash, expansion, everywhere. Spaces are evil.
+Don't forget about bash expansion. Anything that contains spaces or anything else that can be expanded should be quoted.
 
 Note that you can't pass flags to the functions when sourcing. To configure shwain when sourcing, use env vars (see [Env var based config](#env-var-based-config)).
 
