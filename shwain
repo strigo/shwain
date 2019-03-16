@@ -15,6 +15,9 @@
 # http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 ###
 
+# Use the error status of the first failure, rather than that of the last item in a pipeline.
+set -o pipefail
+
 # shellcheck disable=SC2034
 declare -r VERSION="0.1.0"
 
@@ -362,6 +365,7 @@ function _main() {
   local -r level="$1"
   local -r message="$2"
   shift; shift
+  # shellcheck disable=SC2034
   local kvs=("$@")
 
   _shwain.log "$level" "$message" kvs "$json" "$no_color" "$simple" "$enrich" "$aws" "$name"
